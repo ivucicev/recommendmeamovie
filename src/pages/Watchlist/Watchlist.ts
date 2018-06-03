@@ -24,8 +24,8 @@ export class Watchlist implements OnInit {
 	}
 
 	public ngOnInit(): void {
-		this.loadMovies();
 		this.setPosterPath();
+		this.loadMovies();
 	}
 
 	private setPosterPath = () => {
