@@ -21,10 +21,10 @@ export class Watchlist implements OnInit {
 		private _movieService: MovieService,
 		private _storage: StorageService,
 		private _alertCtrl: AlertController) {
+			this.setPosterPath();
 	}
 
 	public ngOnInit(): void {
-		this.setPosterPath();
 		this.loadMovies();
 	}
 

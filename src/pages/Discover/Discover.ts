@@ -1,17 +1,16 @@
 import { Component } from '@angular/core';
-import { NavController, } from 'ionic-angular';
-import { Observable } from "rxjs/Observable";
-import { Http, Response } from '@angular/http';
+import { ModalController, } from 'ionic-angular';
+import { Response } from '@angular/http';
 import { OnInit } from '@angular/core';
 import { MovieService } from "../../app/Utility/movie.service";
 import { StorageService } from "../../app/Utility/cache.service";
-import { Platform, NavParams, ViewController, AlertController, ToastController, PopoverController } from 'ionic-angular';
+import { Platform, NavParams, ViewController, AlertController, ToastController } from 'ionic-angular';
 
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import { Movie } from "../../app/Models/movie";
-import { SearchQuery } from "../../app/Models/searchQuery";
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
 	selector: 'page-discover',
@@ -20,22 +19,22 @@ import { SearchQuery } from "../../app/Models/searchQuery";
 })
 export class Discover implements OnInit {
 
-	private readonly YOUTUBE_URL: string = "http://youtube.com/watch?v=";
+	private readonly YOUTUBE_URL: string = "https://www.youtube.com/embed/";
 
 	public showImageLoader: boolean = false;
 
-	private movie: Movie = new Movie();
 	private movies: Movie[] = [];
 	private genres: Array<{ id: number, name: string }> = []
-	private loader = null;
 	private posterPath: string = "";
 
 	private item: number = 1;
 
 	constructor(
-		private _toastCtrl: ToastController, 
-		private _movieService: MovieService, 
-		private _storage: StorageService) {
+		private _toastCtrl: ToastController,
+		private _movieService: MovieService,
+		private _storage: StorageService,
+		private _modal: ModalController,
+		private _alertService: AlertController) {
 	}
 
 	public nextMovie = () => {
@@ -56,7 +55,7 @@ export class Discover implements OnInit {
 			duration: 1500,
 			position: 'top'
 		});
-  		toast.present();
+		toast.present();
 		this.nextMovie();
 	}
 
@@ -73,7 +72,7 @@ export class Discover implements OnInit {
 		this._movieService.getMovieDetails(movie.id, this.handleMovieDetails);
 	}
 
-	private handleMovieDetails(res: Response) {	
+	private handleMovieDetails(res: Response) {
 		// console.log(res);
 	}
 
@@ -91,9 +90,19 @@ export class Discover implements OnInit {
 
 	private handleTrailers = (res: Response): void => {
 		let trailersRes: any = res.json();
+		if (!trailersRes || !trailersRes.results || trailersRes.results.length == 0) {
+			const alert = this._alertService.create({
+				title: 'Sorry!',
+				subTitle: 'No trailers found!',
+				buttons: ['OK']
+			});
+			alert.present();
+		}
 		let trailer = trailersRes.results.find(t => t.type === 'Trailer');
-		if (trailer)
-			window.open(`${this.YOUTUBE_URL}${trailer.key}`);
+		if (trailer) {
+			const modal = this._modal.create(ModalContentPage, {url: `${this.YOUTUBE_URL}${trailer.key}`});
+			modal.present();
+		}
 	}
 
 	private handleGenres = (res: Response): void => {
@@ -120,3 +129,43 @@ export class Discover implements OnInit {
 	}
 
 }
+
+@Component({
+	template: `
+  <ion-header>
+	<ion-toolbar>
+	  <ion-buttons start>
+		<button ion-button (click)="dismiss()">
+		  <span ion-text color="primary" showWhen="ios">Cancel</span>
+		  <ion-icon name="md-close" showWhen="android, windows"></ion-icon>
+		</button>
+	  </ion-buttons>
+	</ion-toolbar>
+  </ion-header>
+  <ion-content>
+	<iframe width="100%" height="100%" [src]="getSafeUrl(ytUrl)" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </ion-content>
+  `
+})
+export class ModalContentPage {
+
+	public ytUrl: any;
+
+	constructor(
+		public platform: Platform,
+		public params: NavParams,
+		public viewCtrl: ViewController,
+		public domSan: DomSanitizer
+	) {
+		this.ytUrl = this.params.get('url')
+	}
+
+	getSafeUrl(url) {
+		return this.domSan.bypassSecurityTrustResourceUrl(url)
+	}
+
+	dismiss() {
+		this.viewCtrl.dismiss();
+	}
+}
+

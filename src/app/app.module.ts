@@ -3,7 +3,7 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { Watchlist } from '../pages/Watchlist/Watchlist';
 import { Settings } from '../pages/Settings/Settings';
-import { Discover } from '../pages/Discover/Discover';
+import { Discover, ModalContentPage } from '../pages/Discover/Discover';
 import { TabsPage } from '../pages/tabs/tabs';
 
 import { StatusBar } from '@ionic-native/status-bar';
@@ -15,7 +15,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 		Watchlist,
 		Settings,
 		Discover,
-		TabsPage
+		TabsPage,
+		ModalContentPage
 	],
 	imports: [
 		IonicModule.forRoot(MyApp)
@@ -26,7 +27,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 		Watchlist,
 		Settings,
 		Discover,
-		TabsPage
+		TabsPage,
+		ModalContentPage
 	],
 	providers: [
 		StatusBar,
