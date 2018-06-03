@@ -1,0 +1,34 @@
+<ion-content>
+    <ion-list>
+        <ion-item>
+            <ion-label stacked color="dark">
+                Year range {{ settings["release_date.gte"] ? settings["release_date.gte"] : '-'}} {{settings["release_date.gte"] ? 'to':''}}
+                {{settings["release_date.lte"] ? settings["release_date.lte"]: '-'}}
+            </ion-label>
+            <ion-range max="{{maxYear}}" min="{{minYear}}" step="1" dualKnobs="true" pin="true" [(ngModel)]="yearRange" (ngModelChange)="trackYear()"
+                color="dark">
+                <ion-icon range-left small name="md-arrow-down"></ion-icon>
+                <ion-icon range-right small name="md-arrow-up"></ion-icon>
+            </ion-range>
+        </ion-item>
+        <ion-item>
+            <ion-label stacked color="dark">Rating {{settings["vote_average.gte"] ? settings["vote_average.gte"] : ''}} {{settings["vote_average.gte"] ?
+                '+':''}} </ion-label>
+            <ion-range min="1" max="10" step="1" pin="true" [(ngModel)]="settings['vote_average.gte']" color="dark">
+                <ion-icon range-left small name="md-star-half"></ion-icon>
+                <ion-icon range-right small name="md-star"></ion-icon>
+            </ion-range>
+        </ion-item>
+        <ion-item (click)="showGenres()">
+            <ion-label>Genres</ion-label>
+            <ion-icon name="md-options" item-right></ion-icon>
+        </ion-item>
+        <ion-item>
+            <ion-label color="dark"> Adult Content </ion-label>
+            <ion-toggle checked="false" [(ngModel)]="settings.include_adult" color="success"></ion-toggle>
+        </ion-item>
+        <ion-item>
+            <button ion-button medium clear block color="primary" (click)="saveSettings()">Save</button>
+            </ion-item>
+    </ion-list>
+</ion-content>

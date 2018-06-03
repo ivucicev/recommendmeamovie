@@ -1,0 +1,52 @@
+<ion-content class="card-background-page" color="dark"  padding-top="">
+    <ion-refresher (ionRefresh)="getMovies($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    <ion-card *ngFor="let movie of movies; let i = index" [hidden]="item !== i">
+        <div class="image-container" style="height: 526px; width: 100%; text-align: center;" *ngIf="movie.poster_path">
+            <!-- <ng-container >
+                <ion-spinner></ion-spinner>
+            </ng-container> -->
+            <!-- *ngIf="item == i" -->
+            <ng-container>
+                <img [src]="posterPath + movie.poster_path" onerror="this.src = './cannotload.png'">
+            </ng-container>
+        </div>
+        <ion-card-content>
+            <h1>{{movie.title}}</h1>
+            <ion-note>
+                Year: {{movie.release_date}} Avg. Rating: {{movie.vote_average}}
+            </ion-note>
+            <hr>
+            <ion-note>
+                {{movie.genres.join(", ")}}
+            </ion-note>
+            <p>{{movie.overview}}</p>
+        </ion-card-content>
+        <hr>
+        <ion-row>
+            <ion-col class="text-center">
+                <button ion-button icon-left clear small block (click)="addToWatchlist(movie)">
+                  <ion-icon name="md-add"></ion-icon>
+                  <div>Add to watchlist</div>
+                </button>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <button ion-button icon-left clear small block (click)="nextMovie()">
+                  <ion-icon name="md-skip-forward"></ion-icon>
+                  <div>Give me another</div>
+              </button>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <button ion-button icon-left clear small block (click)="getTrailers(movie.id)">
+                  <ion-icon name="logo-youtube"></ion-icon>
+                  <div>Watch trailer</div>
+                </button>
+            </ion-col>
+        </ion-row>
+    </ion-card>
+</ion-content>

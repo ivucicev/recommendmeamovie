@@ -1,0 +1,14 @@
+<ion-content class="card-background-page watchlist">
+    <ng-container *ngFor="let movie of movies; let i = index">
+        <ion-card class="watchlist-card" (click)="watched(movie)">
+            <ng-container *ngIf="movie.backdrop_path">
+                <img [src]="posterPath + movie.backdrop_path"/>
+            </ng-container>
+            <ng-container *ngIf="movie.backdrop_path == null">
+                <img [src]="posterPath + movie.poster_path" style="height: 199px!important"/>
+            </ng-container>
+            <div class="card-title watchlist-title">{{movie.title}}</div>
+            <div class="card-subtitle watchlist-subtitle">Rating {{movie.vote_average}}</div>
+        </ion-card>
+    </ng-container>
+</ion-content>
